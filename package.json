@@ -1,0 +1,18 @@
+{
+  "name": "react-native-action-sheet-aldy",
+  "version": "1.0.3",
+  "description": "react native action sheet",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react-native-action-sheet",
+    "react-native-action-sheet-aldy",
+    "react-native-picker",
+    "react-native-options",
+    "aldy"
+  ],
+  "author": "aldyaldy",
+  "license": "ISC"
+}
