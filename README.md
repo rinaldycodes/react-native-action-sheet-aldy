@@ -6,4 +6,4 @@ Key features:
 Presentation of options in an action sheet format.
 Selection of a single item from the presented options.
 Customizable appearance and behavior to suit specific application needs.
-Enhances user interaction and engagement within the applicatio
+Enhances user interaction and engagement within the application
