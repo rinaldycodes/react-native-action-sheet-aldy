@@ -8,14 +8,18 @@ const ActionSheet = ({
   optionValue,
   optionLabel,
   options,
-
+  textStyle,
+  textLoadStyle,
 }) => {
   const [selected_item, set_selected_item] = useState('');
   
   const [isActionSheetVisible, setIsActionSheetVisible] = useState(false);
+  const [visibleOptions, setVisibleOptions] = useState(15);
+  const [loading, set_loading] = useState(false);
 
   useEffect( () => {
     handleValue()
+
   }, [])
 
   const handlePress = () => {
@@ -34,21 +38,8 @@ const ActionSheet = ({
   };
 
   const handleValue = async () => {
-    // const stringVal = JSON.stringify(value);
-    // if ( stringVal ) {
-
-    //   if ( optionValue ) {
-    //      filteredOption = options.filter(option => option[optionValue].toLowerCase() == stringVal.toLowerCase() );
-    //   } else {
-    //   filteredOption = options.filter(option => option['value'].toLowerCase() == stringVal.toLowerCase() );
-    //   }
-
-    //   if ( filteredOption.length > 0 ) {
-    //     set_selected_item(filteredOption[0][optionLabel])
-    //   }
-    // }
-        const result = await handleFilteredOption();
-        set_selected_item(result)
+    const result = await handleFilteredOption();
+    set_selected_item(result)
 
   }
 
@@ -56,10 +47,13 @@ const ActionSheet = ({
     const stringVal = JSON.stringify(value);
     if ( stringVal ) {
 
+
       if ( optionValue ) {
-         filteredOption = options.filter(option => option[optionValue].toLowerCase() == stringVal.toLowerCase() );
+         filteredOption = options.filter(option => {
+          String(option[optionValue]).toLowerCase() == stringVal.toLowerCase()
+         } );
       } else {
-      filteredOption = options.filter(option => option['value'].toLowerCase() == stringVal.toLowerCase() );
+        filteredOption = options.filter(option => option['value'].toLowerCase() == stringVal.toLowerCase() );
       }
 
       if ( filteredOption.length > 0 ) {
@@ -70,10 +64,18 @@ const ActionSheet = ({
     }
   }
 
+  const handleLoadMoreOptions = () => {
+    set_loading(true);
+    setVisibleOptions(prevVisibleOptions => prevVisibleOptions + 5);  // Menambah 5 opsi setiap kali dipanggil
+    setTimeout(() => {
+      set_loading(false);
+    }, 1000);
+  };
+
   return (
     <>
       <TouchableOpacity onPress={handlePress}>
-        <Text>{selected_item?selected_item:placeholder}</Text>
+        <Text style={textStyle}>{selected_item?selected_item:placeholder}</Text>
       </TouchableOpacity>
       <Modal transparent animationType="slide" visible={isActionSheetVisible}>
         <View style={styles.overlay}>
@@ -86,34 +88,52 @@ const ActionSheet = ({
                     style={{ fontWeight: 'bold', textAlign: 'center'}}
                   >{placeholder}</Text>
                 </View>
-                <ScrollView >
+                <ScrollView 
+                  onScroll={({ nativeEvent }) => {
+                    if (isCloseToBottom(nativeEvent)) {
+                      handleLoadMoreOptions();
+                    }
+                  }}
+                >
                     
-                  {options.map((option, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handleOptionPress(option)}
-                      style={[styles.option,
-                        {
-                          backgroundColor: (option[optionLabel] == selected_item && 'coral'),
-                        }
-                      ]}
-                    >
-                      <Text
-                        style={{
-                          color: (option[optionLabel] == selected_item && 'white')
-                        }}
-                      >{option[optionLabel]}</Text>
-                    </TouchableOpacity>
-                  ))}
-                  <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-                    <Text style={styles.cancelText}>Cancel</Text>
-                  </TouchableOpacity>
+                  {options.slice(0, visibleOptions).map((option, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              onPress={() => handleOptionPress(option)}
+                              style={[styles.option,
+                                {
+                                  backgroundColor: (option[optionLabel] == selected_item && 'coral'),
+                                }
+                              ]}
+                            >
+                              <Text
+                                style={{
+                                  color: (option[optionLabel] == selected_item && 'white')
+                                }}
+                              >{option[optionLabel]}</Text>
+                            </TouchableOpacity>
+                          )
+                  })}
                 </ScrollView>
+                    {
+                      loading &&
+                    < Text style={[ {textAlign: 'center'}, textLoadStyle]}>Load more data...</Text>
+                    }
+                <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
               </View>
         </View>
       </Modal>
     </>
   );
+};
+
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom;
 };
 
 const styles = StyleSheet.create({

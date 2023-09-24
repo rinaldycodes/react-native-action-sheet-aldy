@@ -11,3 +11,11 @@ Enhances user interaction and engagement within the application
 ## basic usage
 
 [on Expo Snack](https://snack.expo.dev/@rinaldycodes/actionsheet-using-expo-react-native)
+
+## changelog
+
+add props
+ - textStyle,
+ - textLoadStyle,
+
+adding load more data, default show 15 options then if go to the bottom load more yours options
