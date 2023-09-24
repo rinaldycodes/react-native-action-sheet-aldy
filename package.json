@@ -1,6 +1,10 @@
 {
   "name": "react-native-action-sheet-aldy",
-  "version": "1.0.3",
+  "version": "1.0.5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rinaldycodes/react-native-action-sheet-aldy"
+  },
   "description": "react native action sheet",
   "main": "index.js",
   "scripts": {
